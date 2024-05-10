@@ -4,12 +4,13 @@ import "@/components/fonts/fonts.css";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import NavBar from "@/components/layout/NavBar";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Stay Savvy",
-  description: "Hotel booking web",
+  title: "Shelter",
+  description: "Hotel booking Website",
   icons: { icon: "/Logo/logo.svg" },
 };
 
@@ -22,10 +23,17 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
-          <main className="flex flex-col min-h-screen bg-secondary">
-            <NavBar />
-            <section className="flex-grow">{children}</section>
-          </main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className="flex flex-col min-h-screen bg-secondary">
+              <NavBar />
+              <section className="flex-grow">{children}</section>
+            </main>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

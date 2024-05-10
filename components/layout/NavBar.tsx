@@ -9,6 +9,8 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import SearchInput from "../SearchInput";
+import { ModeToggle } from "./ModeToggle";
+import { NavMenu } from "../NavMenu";
 
 const NavBar = () => {
   const [isLoading, setIsLoading] = React.useState(true);
@@ -28,21 +30,28 @@ const NavBar = () => {
       <Container className="flex justify-between">
         <Link href="/" className="flex gap-1 items-center cursor-pointer">
           <Image src="/Logo/logo.svg" alt="logo" width={40} height={40} />
-          <h1 className="font-bold text-2xl poppins">Stay Savvy</h1>
+          <h1 className="font-bold text-2xl poppins">Shelter</h1>
         </Link>
-<SearchInput/>
+        <SearchInput />
         {userId ? (
           isLoading ? (
             <div className="flex items-center space-x-4">
+              <Skeleton className="h-10 w-10 rounded-md bg-slate-300/40 " />
+              <Skeleton className="h-10 w-10 rounded-md bg-slate-300/40 " />
               <Skeleton className="h-12 w-12 rounded-full bg-slate-300/40" />
             </div>
           ) : (
-            <div className="h-12 w-12">
-              <UserButton afterSignOutUrl="/" />
+            <div className="flex gap-5 items-center">
+              <ModeToggle />
+              <NavMenu/>
+              <div className="h-12 w-12 flex items-center justify-center bg-slate-200/50 rounded-full">
+                <UserButton afterSignOutUrl="/" />
+              </div>
             </div>
           )
         ) : (
           <div className="flex gap-5 items-center">
+            <ModeToggle />
             <Button
               variant="outline"
               size="sm"
