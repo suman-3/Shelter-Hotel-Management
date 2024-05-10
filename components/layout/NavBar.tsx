@@ -44,7 +44,7 @@ const NavBar = () => {
             <div className="flex gap-5 items-center">
               <ModeToggle />
               <NavMenu/>
-              <div className="h-12 w-12 flex items-center justify-center bg-slate-200/50 rounded-full">
+              <div className="h-12 w-12 flex items-center justify-center bg-gray-300/50 rounded-full">
                 <UserButton afterSignOutUrl="/" />
               </div>
             </div>
