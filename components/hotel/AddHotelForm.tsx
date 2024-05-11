@@ -571,39 +571,60 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Select City </FormLabel>
-                      <FormDescription className="text-[12px]">
-                        In Which town/city is your property Located?
-                      </FormDescription>
-                      <Select
-                        disabled={isLoading || cities.length < 1}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
-                        <SelectTrigger className="bg-background">
-                          <SelectValue
-                            defaultValue={field.value}
-                            placeholder="Select Your City"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {cities.map((city) => (
-                            <SelectItem key={city.name} value={city.name}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
               </div>
+              <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select City </FormLabel>
+                    <FormDescription className="text-[12px]">
+                      In Which town/city is your property Located?
+                    </FormDescription>
+                    <Select
+                      disabled={isLoading || cities.length < 1}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="bg-background">
+                        <SelectValue
+                          defaultValue={field.value}
+                          placeholder="Select Your City"
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((city) => (
+                          <SelectItem key={city.name} value={city.name}>
+                            {city.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="locationDescription"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location Description *</FormLabel>
+                    <FormDescription>
+                      Provide a detailed location description of your hotel
+                    </FormDescription>
+                    <FormControl>
+                      <Textarea
+                        className="resize-none"
+                        placeholder="Located at the very end of the beach, with a beautiful view of the ocean."
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
         </form>
