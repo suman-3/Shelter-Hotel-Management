@@ -1,7 +1,7 @@
 "use client";
 
 import { RoomCardProps } from "@/interface/RoomCardProps";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -53,16 +53,44 @@ import { Room } from "@prisma/client";
 import axios from "axios";
 
 import { useToast } from "../ui/use-toast";
+import { DatePickerWithRange } from "./DateRangePicker";
+import { DateRange } from "react-day-picker";
+import { addDays, differenceInCalendarDays, set } from "date-fns";
+import { Checkbox } from "../ui/checkbox";
 
 const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [date, setDate] = useState<DateRange | undefined>();
+  const [totalPrice, setTotalPrice] = useState(room.roomPrice);
+  const [includeBreakFast, setIncludeBreakFast] = useState(false);
+  const [days, setDays] = useState(0);
 
   const router = useRouter();
   const { toast } = useToast();
 
   const pathname = usePathname();
   const isHotelDetailsPage = pathname.includes("hotel-details");
+
+  useEffect(() => {
+    if (date && date.from && date.to) {
+      const dayCount = differenceInCalendarDays(date.to, date.from);
+
+      setDays(dayCount);
+
+      if (dayCount && room.roomPrice) {
+        if (includeBreakFast && room.breakFastPrice) {
+          setTotalPrice(
+            dayCount * room.roomPrice + dayCount * room.breakFastPrice
+          );
+        } else {
+          setTotalPrice(dayCount * room.roomPrice);
+        }
+      } else {
+        setTotalPrice(room.roomPrice);
+      }
+    }
+  }, [date, room.roomPrice, includeBreakFast]);
 
   const handleDialogueOpen = () => {
     setOpenDialog((prev) => !prev);
@@ -212,7 +240,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
             <span className="text-xs">/24hrs</span>
           </div>
           {!!room.breakFastPrice && (
-            <div>
+            <div className="flex items-center gap-1">
               Breakfast Price:
               <span className="font-bold">₹{room.breakFastPrice}</span>
             </div>
@@ -222,7 +250,37 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
       </CardContent>
       <CardFooter>
         {isHotelDetailsPage ? (
-          <div>Hotel Details Page</div>
+          <div className="flex flex-col gap-6">
+            <div>
+              <h2 className="text-semibold mb-1">Select days</h2>
+              <DatePickerWithRange date={date} setDate={setDate} />
+            </div>
+            {room.breakFastPrice > 0 && (
+              <div>
+                <div className="mb-1 text-[14px]">
+                  Do You Want to served breakfast everyday?
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="breakFast"
+                    onCheckedChange={(value) => {
+                      setIncludeBreakFast(!!value);
+                    }}
+                  />
+                  <label
+                    htmlFor="breakFast"
+                    className="text-gray-600/70 text-sm"
+                  >
+                    Include Breakfast
+                  </label>
+                </div>
+              </div>
+            )}
+            <div className="flex items-center gap-1">
+              Total Price: <span className="font-bold">₹{totalPrice}</span>{" "}
+              {days > 0 ? `for ${days} Days` : "per day"}
+            </div>
+          </div>
         ) : (
           <>
             <div className="flex flex-col gap-2 w-full justify-center items-center">
