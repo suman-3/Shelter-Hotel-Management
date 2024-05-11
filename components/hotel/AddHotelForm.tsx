@@ -3,8 +3,15 @@ import * as z from "zod";
 import { AddHotelFormProps } from "@/interface/AddHotelFormProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -39,12 +46,26 @@ import { UploadButton } from "../uploadthing";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
+import useLocation from "@/hooks/useLocation";
+import { ICity, IState } from "country-state-city";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
   const [imageIsDeleting, setImageIsDeleting] = useState(false);
+  const [states, setStates] = useState<IState[]>([]);
+  const [cities, setCities] = useState<ICity[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    getAllCountries,
+    getCountryByCode,
+    getStateByCode,
+    getCountryStates,
+    getStateCities,
+  } = useLocation();
 
   const { toast } = useToast();
+
+  const countries = getAllCountries();
 
   const form = useForm<z.infer<typeof HotlFormSchema>>({
     resolver: zodResolver(HotlFormSchema),
@@ -70,6 +91,23 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
       coffeeShop: false,
     },
   });
+
+  useEffect(() => {
+    const selectedCountry = form.watch("country");
+    const countryStates = getCountryStates(selectedCountry);
+    if (countryStates) {
+      setStates(countryStates);
+    }
+  }, [form.watch("country")]);
+
+  useEffect(() => {
+    const selectedState = form.watch("state");
+    const selectedCountry = form.watch("country");
+    const stateCities = getStateCities(selectedCountry, selectedState);
+    if (stateCities) {
+      setCities(stateCities);
+    }
+  }, [form.watch("state")]);
 
   function onSubmit(values: z.infer<typeof HotlFormSchema>) {
     console.log(values);
@@ -109,7 +147,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
           <h3 className="text-lg underline">
             {hotel ? "Update your hotel" : "Describe your hotel"}
           </h3>
-          <div className="flex flex-col md:flex-row gap-5">
+          <div className="flex flex-col md:flex-row gap-5 md:gap-8">
             <div className="flex-1 flex flex-col gap-6">
               <FormField
                 control={form.control}
@@ -461,7 +499,80 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                 )}
               />
             </div>
-            <div className="flex flex-1 flex-col gap-6">part 2</div>
+            <div className="flex flex-1 flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <FormField
+                  control={form.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select Country *</FormLabel>
+                      <FormDescription className="text-[12px]">
+                        In Which country is your property Located?
+                      </FormDescription>
+                      <Select
+                        disabled={isLoading}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="bg-background">
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder="Select Your Country"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {countries.map((country) => (
+                            <SelectItem
+                              key={country.isoCode}
+                              value={country.isoCode}
+                            >
+                              {country.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="state"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Select State *</FormLabel>
+                      <FormDescription className="text-[12px]">
+                        In Which state is your property Located?
+                      </FormDescription>
+                      <Select
+                        disabled={isLoading || states.length < 1}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="bg-background">
+                          <SelectValue
+                            defaultValue={field.value}
+                            placeholder="Select Your State"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {states.map((state) => (
+                            <SelectItem
+                              key={state.isoCode}
+                              value={state.isoCode}
+                            >
+                              {state.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
         </form>
       </Form>
