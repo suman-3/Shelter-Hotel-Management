@@ -2,8 +2,9 @@
 import * as z from "zod";
 import { AddHotelFormProps } from "@/interface/AddHotelFormProps";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -23,6 +24,7 @@ import {
   Car,
   Coffee,
   Dumbbell,
+  Loader2,
   MonitorPlay,
   ShoppingBag,
   Sparkle,
@@ -31,9 +33,19 @@ import {
   Waves,
   Wifi,
   Wine,
+  XCircle,
 } from "lucide-react";
+import { UploadButton } from "../uploadthing";
+import Image from "next/image";
+import { Button } from "../ui/button";
+import { useToast } from "../ui/use-toast";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
+  const [image, setImage] = useState<string | undefined>(hotel?.image);
+  const [imageIsDeleting, setImageIsDeleting] = useState(false);
+
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof HotlFormSchema>>({
     resolver: zodResolver(HotlFormSchema),
     defaultValues: {
@@ -62,6 +74,34 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   function onSubmit(values: z.infer<typeof HotlFormSchema>) {
     console.log(values);
   }
+
+  const handleImageDelete = (image: string) => {
+    setImageIsDeleting(true);
+    const imageKey = image.substring(image.lastIndexOf("/") + 1);
+    axios
+      .post("/api/uploadthing/delete", {
+        imageKey,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setImage("");
+          toast({
+            variant: "success",
+            description: "Image deleted successfully",
+          });
+        }
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          description: `ERROR! ${error.message}`,
+        });
+      })
+      .finally(() => {
+        setImageIsDeleting(false);
+      });
+  };
+
   return (
     <div>
       <Form {...form}>
@@ -76,7 +116,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hotel Title</FormLabel>
+                    <FormLabel>Hotel Title *</FormLabel>
                     <FormDescription>Provide your Hotel name</FormDescription>
                     <FormControl>
                       <Input placeholder="Beach Hotel" {...field} />
@@ -91,7 +131,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Hotel Description</FormLabel>
+                    <FormLabel>Hotel Description *</FormLabel>
                     <FormDescription>
                       Provide a detailed description of hotel
                     </FormDescription>
@@ -113,7 +153,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   Select Popular Amenities in your hotel
                 </FormDescription>
 
-                <div className="grid grid-cols-3 gap-6 mt-4">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
                   <FormField
                     control={form.control}
                     name="gym"
@@ -187,7 +227,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                             />
                           </FormControl>
                           <span className="flex items-center gap-2">
-                            <FormLabel>Laundry Facilities</FormLabel>
+                            <FormLabel>Laundry</FormLabel>
                             <WashingMachine
                               size={16}
                               className="text-gray-600"
@@ -359,6 +399,67 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   />
                 </div>
               </div>
+              <FormField
+                control={form.control}
+                name="image"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col space-y-2 mt-4">
+                    <FormLabel>Upload an Image *</FormLabel>
+                    <FormDescription>
+                      Upload a beautiful image of your hotel
+                    </FormDescription>
+                    <FormControl>
+                      {image ? (
+                        <>
+                          <div className="relative max-w-[400px] min-w-[200px] max-h-[400px] min-h-[200px] mt-4 border-2 border-dotted border-gray-400">
+                            <Image
+                              src={image}
+                              alt="hotel banner"
+                              fill
+                              className="object-contain p-2"
+                            />
+                            <Button
+                              type="button"
+                              size="icon"
+                              variant="ghost"
+                              className="absolute right-0 top-0 "
+                              onClick={() => handleImageDelete(image)}
+                            >
+                              {imageIsDeleting ? (
+                                <Loader2 className="animate-spin" size={20} />
+                              ) : (
+                                <XCircle size={20} />
+                              )}
+                            </Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col items-center max-w-[4000px] border-2 border-dotted border-primary/50 rounded justify-center pt-6 pb-3">
+                            <UploadButton
+                              endpoint="imageUploader"
+                              onClientUploadComplete={(res) => {
+                                setImage(res[0].url);
+                                toast({
+                                  variant: "success",
+                                  description: "Image uploaded successfully",
+                                });
+                              }}
+                              onUploadError={(error: Error) => {
+                                toast({
+                                  variant: `destructive`,
+                                  description: `ERROR! ${error.message}`,
+                                });
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="flex flex-1 flex-col gap-6">part 2</div>
           </div>
