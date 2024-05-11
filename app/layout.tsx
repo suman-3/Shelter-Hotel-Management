@@ -35,7 +35,7 @@ export default function RootLayout({
             <main className="flex flex-col min-h-screen bg-secondary">
               <NavBar />
 
-              <section className="flex-grow">{children}</section>
+              <section className="flex-grow px-4 lg:px-10">{children}</section>
             </main>
           </ThemeProvider>
         </body>

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PartyPopper, Terminal } from "lucide-react";
+import { GiShoppingBag } from "react-icons/gi";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -73,6 +74,7 @@ import {
 import AddRoomForm from "../room/AddRoomForm";
 import { Separator } from "../ui/separator";
 import RoomCard from "../room/RoomCard";
+import { FaSpa } from "react-icons/fa";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
@@ -354,7 +356,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                           </FormControl>
                           <span className="flex items-center gap-2">
                             <FormLabel>SPA</FormLabel>
-                            <Sparkle size={16} className="text-gray-600" />
+                            <FaSpa size={18} className="text-gray-600" />
                           </span>
                         </div>
                       </FormItem>
@@ -437,7 +439,10 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                           </FormControl>
                           <span className="flex items-center gap-2">
                             <FormLabel>Shopping</FormLabel>
-                            <ShoppingBag size={16} className="text-gray-600" />
+                            <GiShoppingBag
+                              size={16}
+                              className="text-gray-600"
+                            />
                           </span>
                         </div>
                       </FormItem>

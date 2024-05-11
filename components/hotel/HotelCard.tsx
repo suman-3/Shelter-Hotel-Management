@@ -2,7 +2,7 @@
 import { HotelWithRooms } from "@/interface/AddHotelFormProps";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-
+import { FaSwimmer } from "react-icons/fa";
 import React from "react";
 import Container from "../Container";
 import Image from "next/image";
@@ -56,7 +56,7 @@ const HotelCard = ({ hotel }: { hotel: HotelWithRooms }) => {
             )}
             {hotel.swimmingPool && (
               <AmenityItem>
-                <Waves className="h-4 w-4" />
+                <FaSwimmer size={18} />
                 Pool
               </AmenityItem>
             )}
