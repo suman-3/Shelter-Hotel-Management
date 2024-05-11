@@ -2,7 +2,7 @@
 import { AddRoomFormProps } from "@/interface/AddRommFormProps";
 import RoomFormSchema from "@/schemas/RoomFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import {
@@ -19,12 +19,14 @@ import { Textarea } from "../ui/textarea";
 import { Checkbox } from "../ui/checkbox";
 import {
   AirVent,
+  CirclePlus,
   EarOff,
   HeartHandshake,
   Home,
   Loader2,
   Monitor,
   Mountain,
+  PencilLine,
   Ship,
   Trees,
   UsersRound,
@@ -36,12 +38,15 @@ import { UploadButton } from "../uploadthing";
 import { useToast } from "../ui/use-toast";
 import axios from "axios";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 const AddRoomForm = ({ hotel, room, handleDialogueOpen }: AddRoomFormProps) => {
   const [image, setImage] = useState<string | undefined>(room?.image);
   const [imageIsDeleting, setImageIsDeleting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof RoomFormSchema>>({
     resolver: zodResolver(RoomFormSchema),
@@ -69,6 +74,16 @@ const AddRoomForm = ({ hotel, room, handleDialogueOpen }: AddRoomFormProps) => {
     },
   });
 
+  useEffect(() => {
+    if (typeof image === "string" && image.length > 0) {
+      form.setValue("image", image, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+  }, [image]);
+
   const handleImageDelete = (image: string) => {
     setImageIsDeleting(true);
     const imageKey = image.substring(image.lastIndexOf("/") + 1);
@@ -95,6 +110,52 @@ const AddRoomForm = ({ hotel, room, handleDialogueOpen }: AddRoomFormProps) => {
         setImageIsDeleting(false);
       });
   };
+
+  function onSubmit(values: z.infer<typeof RoomFormSchema>) {
+    setIsLoading(true);
+    if (hotel && room) {
+      //update room
+      axios
+        .patch(`/api/room/${room.id}`, { ...values })
+        .then((res) => {
+          toast({
+            variant: "success",
+            description: "Room Updated",
+          });
+          router.refresh();
+          setIsLoading(false);
+          handleDialogueOpen();
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+          setIsLoading(false);
+        });
+    } else {
+      if (!hotel) return;
+      //create room
+      axios
+        .post("/api/room", { ...values, hotelId: hotel.id })
+        .then((res) => {
+          toast({
+            variant: "success",
+            description: "🎉 Room created ",
+          });
+          router.refresh();
+          setIsLoading(false);
+          handleDialogueOpen();
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+          setIsLoading(false);
+        });
+    }
+  }
 
   return (
     <div className="max-h-[75vh] overflow-y-auto px-2 pb-4">
@@ -531,6 +592,49 @@ const AddRoomForm = ({ hotel, room, handleDialogueOpen }: AddRoomFormProps) => {
                 )}
               />
             </div>
+          </div>
+          <div className="pt-4 pb-2">
+            {room ? (
+              <Button
+                onClick={form.handleSubmit(onSubmit)}
+                type="button"
+                disabled={isLoading}
+                className="w-[150px]"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                    Updating
+                  </>
+                ) : (
+                  <>
+                    <PencilLine className="mr-2 h-4 w-4" />
+                    Update Room
+                  </>
+                )}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  disabled={isLoading}
+                  className="w-[150px]"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                      Creating
+                    </>
+                  ) : (
+                    <>
+                      <CirclePlus className="mr-2 h-4 w-4" />
+                      Create Room
+                    </>
+                  )}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Form>

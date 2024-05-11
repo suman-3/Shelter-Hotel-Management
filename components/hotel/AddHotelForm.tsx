@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { PartyPopper, Terminal } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -71,6 +71,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import AddRoomForm from "../room/AddRoomForm";
+import { Separator } from "../ui/separator";
+import RoomCard from "../room/RoomCard";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
@@ -755,7 +757,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
               />
               {hotel && !hotel.rooms.length && (
                 <Alert className="bg-purple-500 text-white">
-                  <Terminal className="h-4 w-4 stroke-white" />
+                  <PartyPopper className="h-4 w-4 stroke-white" />
                   <AlertTitle>One last step!</AlertTitle>
                   <div className="flex flex-row gap-8">
                     <AlertDescription>
@@ -888,6 +890,17 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </Dialog>
                 )}
               </div>
+              {hotel && !!hotel.rooms.length && (
+                <div>
+                  <Separator />
+                  <h3 className="text-lg font-semibold my-4">Hotel Rooms</h3>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    {hotel.rooms.map((room) => (
+                      <RoomCard key={room.id} hotel={hotel} room={room} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </form>
