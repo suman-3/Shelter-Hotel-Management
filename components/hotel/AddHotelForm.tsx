@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,6 +37,7 @@ import {
   CirclePlus,
   Coffee,
   Dumbbell,
+  Eye,
   Loader2,
   MonitorPlay,
   PencilLine,
@@ -67,6 +70,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import AddRoomForm from "../room/AddRoomForm";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
@@ -75,6 +79,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [cities, setCities] = useState<ICity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isHotelDeleting, setIsHotelDeleting] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const {
     getAllCountries,
@@ -259,7 +264,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   };
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <h3 className="text-lg underline">
@@ -743,6 +748,31 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </FormItem>
                 )}
               />
+              {hotel && !hotel.rooms.length && (
+                <Alert className="bg-purple-500 text-white">
+                  <Terminal className="h-4 w-4 stroke-white" />
+                  <AlertTitle>One last step!</AlertTitle>
+                  <div className="flex flex-row gap-8">
+                    <AlertDescription>
+                      Your hotel was created successfully 🔥
+                      <div>
+                        Please add some rooms to complete your hotel setup
+                      </div>
+                    </AlertDescription>
+                    {hotel && (
+                      <Button
+                        type="button"
+                        className="w-[120px]"
+                        onClick={() =>
+                          router.push(`/hotel-details/${hotel.id}`)
+                        }
+                      >
+                        <Eye className="mr-2 h-4 w-4" /> Preview
+                      </Button>
+                    )}
+                  </div>
+                </Alert>
+              )}
               <div className="flex justify-between gap-2 flex-wrap">
                 {hotel ? (
                   <Button disabled={isLoading} className="w-[150px]">
@@ -760,7 +790,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </Button>
                 ) : (
                   <>
-                    <Button disabled={isLoading} className="w-[150px]">
+                    <Button disabled={isLoading} className="w-[120px]">
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 animate-spin h-4 w-4" />
@@ -776,6 +806,26 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </>
                 )}
                 {hotel && (
+                  <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                    <DialogTrigger>
+                      <Button type="button" className="w-[150px]">
+                        <CirclePlus className="w-4 h-4 mr-2" />
+                        Add Room
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-[900px] w-[90%]">
+                      <DialogHeader className="px-2">
+                        <DialogTitle>Add A Room</DialogTitle>
+                        <DialogDescription>
+                          Add details about a room in your hotel
+                        </DialogDescription>
+                      </DialogHeader>
+                      <AddRoomForm/>
+                    </DialogContent>
+                  </Dialog>
+                )}
+
+                {hotel && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -786,7 +836,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                       >
                         {isHotelDeleting ? (
                           <>
-                            <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                            <Loader2 className="mr-1 animate-spin h-4 w-4" />
                             Deleting
                           </>
                         ) : (
@@ -797,7 +847,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                         )}
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-md max-w-screen rounded-lg">
+                    <DialogContent className="max-w-[400px] w-[90%] rounded-lg">
                       <DialogHeader>
                         <DialogTitle>Delete Hotel</DialogTitle>
                         <DialogDescription>
@@ -805,12 +855,12 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                         </DialogDescription>
                       </DialogHeader>
 
-                      <DialogFooter className="sm:justify-center gap-10 flex-row">
+                      <DialogFooter className="justify-center gap-8 lg:gap-5 flex-row sm:justify-center">
                         <DialogClose asChild>
                           <Button
                             type="button"
                             variant="outline"
-                            className="w-[150px]"
+                            className="w-[100px]"
                           >
                             Close
                           </Button>
@@ -820,7 +870,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                             type="button"
                             disabled={isHotelDeleting || isLoading}
                             onClick={() => handleDeleteHotel(hotel)}
-                            className="w-[150px]"
+                            className="w-[100px]"
                           >
                             Delete
                           </Button>
