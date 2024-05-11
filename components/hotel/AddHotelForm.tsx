@@ -1,6 +1,9 @@
 "use client";
 import * as z from "zod";
-import { AddHotelFormProps } from "@/interface/AddHotelFormProps";
+import {
+  AddHotelFormProps,
+  HotelWithRooms,
+} from "@/interface/AddHotelFormProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import {
@@ -37,6 +40,7 @@ import {
   PencilLine,
   ShoppingBag,
   Sparkle,
+  Trash,
   Utensils,
   WashingMachine,
   Waves,
@@ -52,6 +56,17 @@ import useLocation from "@/hooks/useLocation";
 import { ICity, IState } from "country-state-city";
 import { useRouter } from "next/navigation";
 import { ToastAction } from "../ui/toast";
+import { HotelPageProps } from "@/interface/HotelPageProps ";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
@@ -59,6 +74,8 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isHotelDeleting, setIsHotelDeleting] = useState(false);
+
   const {
     getAllCountries,
     getCountryByCode,
@@ -128,7 +145,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
     if (hotel) {
       //update hotel
       axios
-        .post(`/api/hotel/${hotel.id}`, values)
+        .patch(`/api/hotel/${hotel.id}`, values)
         .then((res) => {
           toast({
             variant: "success",
@@ -166,6 +183,31 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
     }
   }
 
+  const handleDeleteHotel = async (hotel: HotelWithRooms) => {
+    setIsHotelDeleting(true);
+
+    // const getImageKey = (src: string) => src.substring(src.lastIndexOf("/") + 1);
+    try {
+      // const imagekey = getImageKey(hotel.image);
+      deleteImageWhileDeletingHotel(hotel.image);
+      await axios.delete(`/api/hotel/${hotel.id}`);
+      router.push("/hotel/new");
+      setIsHotelDeleting(false);
+      toast({
+        variant: "success",
+        description: "Hotel deleted successfully",
+      });
+    } catch (error: any) {
+      console.log(error);
+
+      setIsHotelDeleting(false);
+      toast({
+        variant: "destructive",
+        description: `ERROR! ${error.message}`,
+      });
+    }
+  };
+
   const handleImageDelete = (image: string) => {
     setImageIsDeleting(true);
     const imageKey = image.substring(image.lastIndexOf("/") + 1);
@@ -180,6 +222,29 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
             variant: "success",
             description: "Image deleted successfully",
           });
+        }
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          description: `ERROR! ${error.message}`,
+        });
+      })
+      .finally(() => {
+        setImageIsDeleting(false);
+      });
+  };
+
+  const deleteImageWhileDeletingHotel = (image: string) => {
+    setImageIsDeleting(true);
+    const imageKey = image.substring(image.lastIndexOf("/") + 1);
+    axios
+      .post("/api/uploadthing/delete", {
+        imageKey,
+      })
+      .then((res) => {
+        if (res.data.success) {
+          setImage("");
         }
       })
       .catch((error) => {
@@ -709,6 +774,60 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                       )}
                     </Button>
                   </>
+                )}
+                {hotel && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        type="button"
+                        className="w-[150px]"
+                        disabled={isHotelDeleting || isLoading}
+                      >
+                        {isHotelDeleting ? (
+                          <>
+                            <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                            Deleting
+                          </>
+                        ) : (
+                          <>
+                            <Trash className="mr-2 h-4 w-4" />
+                            Delete Hotel
+                          </>
+                        )}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md max-w-screen rounded-lg">
+                      <DialogHeader>
+                        <DialogTitle>Delete Hotel</DialogTitle>
+                        <DialogDescription>
+                          Are you sure , you want to delete the hotel?
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <DialogFooter className="sm:justify-center gap-10 flex-row">
+                        <DialogClose asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-[150px]"
+                          >
+                            Close
+                          </Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button
+                            type="button"
+                            disabled={isHotelDeleting || isLoading}
+                            onClick={() => handleDeleteHotel(hotel)}
+                            className="w-[150px]"
+                          >
+                            Delete
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
             </div>
