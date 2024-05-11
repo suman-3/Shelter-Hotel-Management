@@ -27,6 +27,7 @@ import {
   Monitor,
   Mountain,
   PencilLine,
+  Save,
   Ship,
   Trees,
   UsersRound,
@@ -608,8 +609,8 @@ const AddRoomForm = ({ hotel, room, handleDialogueOpen }: AddRoomFormProps) => {
                   </>
                 ) : (
                   <>
-                    <PencilLine className="mr-2 h-4 w-4" />
-                    Update Room
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Changes
                   </>
                 )}
               </Button>
