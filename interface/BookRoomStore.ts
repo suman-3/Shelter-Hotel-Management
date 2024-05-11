@@ -10,10 +10,10 @@ export type RoomDataType = {
 
 export interface BookRoomStore {
   bookingRoomData: RoomDataType | null;
-  paymentIntent: string | null;
+  paymentIntentId: string | null;
   clientSecret: string | undefined;
   setRoomData: (data: RoomDataType) => void;
-  setPaymentIntent: (paymentIntent: string) => void;
+  setPaymentIntentId: (paymentIntentId: string) => void;
   setClientSecret: (clientSecret: string) => void;
   resetBookRoom: () => void;
 }

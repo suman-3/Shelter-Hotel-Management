@@ -6,17 +6,17 @@ const useBookRooms = create<BookRoomStore>()(
   persist(
     (set) => ({
       bookingRoomData: null,
-      paymentIntent: null,
+      paymentIntentId: null,
       clientSecret: undefined,
       setRoomData: (data: RoomDataType) => {
         set({ bookingRoomData: data });
       },
-      setPaymentIntent: (paymentIntent: string) => set({ paymentIntent }),
+      setPaymentIntentId: (paymentIntentId: string) => set({ paymentIntentId }),
       setClientSecret: (clientSecret: string) => set({ clientSecret }),
       resetBookRoom: () =>
         set({
           bookingRoomData: null,
-          paymentIntent: null,
+          paymentIntentId: null,
           clientSecret: undefined,
         }),
     }),
@@ -25,6 +25,5 @@ const useBookRooms = create<BookRoomStore>()(
     }
   )
 );
-
 
 export default useBookRooms;
