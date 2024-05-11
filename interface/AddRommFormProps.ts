@@ -5,5 +5,5 @@ export interface AddRoomFormProps {
     rooms: Room[];
   };
   room?: Room;
-  handleDialogueOpen: ({hotel, room, handleDialogueOpen}:AddRoomFormProps) => void;
+  handleDialogueOpen: () => void;
 }

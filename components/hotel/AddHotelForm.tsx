@@ -263,6 +263,9 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
       });
   };
 
+  const handleDialogueOpen = () => {
+    setOpenDialog((prev) => !prev);
+  };
   return (
     <div suppressHydrationWarning>
       <Form {...form}>
@@ -320,7 +323,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="gym"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -340,7 +343,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="spa"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -360,7 +363,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="bar"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -380,7 +383,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="laundry"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -403,7 +406,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="restaurent"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -423,7 +426,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="shopping"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -443,7 +446,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="freeParking"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -463,7 +466,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="bikeRental"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -483,7 +486,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="freeWifi"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -503,7 +506,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="movieNights"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -523,7 +526,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="swimmingPool"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -531,7 +534,9 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                             />
                           </FormControl>
                           <span className="flex items-center gap-2">
-                            <FormLabel>Swimming Pool</FormLabel>
+                            <FormLabel className="line-clamp-1">
+                              Swimming Pool
+                            </FormLabel>
                             <Waves size={16} className="text-gray-600" />
                           </span>
                         </div>
@@ -543,7 +548,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     name="coffeeShop"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border p-2 rounded-md border-gray-600 dark:border-slate-400">
                           <FormControl>
                             <Checkbox
                               checked={field.value}
@@ -820,7 +825,10 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                           Add details about a room in your hotel
                         </DialogDescription>
                       </DialogHeader>
-                      <AddRoomForm/>
+                      <AddRoomForm
+                        hotel={hotel}
+                        handleDialogueOpen={handleDialogueOpen}
+                      />
                     </DialogContent>
                   </Dialog>
                 )}
