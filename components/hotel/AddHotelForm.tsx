@@ -29,10 +29,12 @@ import { Checkbox } from "../ui/checkbox";
 import {
   Bike,
   Car,
+  CirclePlus,
   Coffee,
   Dumbbell,
   Loader2,
   MonitorPlay,
+  PencilLine,
   ShoppingBag,
   Sparkle,
   Utensils,
@@ -48,6 +50,8 @@ import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 import useLocation from "@/hooks/useLocation";
 import { ICity, IState } from "country-state-city";
+import { useRouter } from "next/navigation";
+import { ToastAction } from "../ui/toast";
 
 const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   const [image, setImage] = useState<string | undefined>(hotel?.image);
@@ -64,12 +68,12 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   } = useLocation();
 
   const { toast } = useToast();
-
+  const router = useRouter();
   const countries = getAllCountries();
 
   const form = useForm<z.infer<typeof HotlFormSchema>>({
     resolver: zodResolver(HotlFormSchema),
-    defaultValues: {
+    defaultValues: hotel || {
       title: "",
       description: "",
       image: "",
@@ -93,6 +97,16 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   });
 
   useEffect(() => {
+    if (typeof image === "string" && image.length > 0) {
+      form.setValue("image", image, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    }
+  }, [image]);
+
+  useEffect(() => {
     const selectedCountry = form.watch("country");
     const countryStates = getCountryStates(selectedCountry);
     if (countryStates) {
@@ -110,7 +124,46 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
   }, [form.watch("state")]);
 
   function onSubmit(values: z.infer<typeof HotlFormSchema>) {
-    console.log(values);
+    setIsLoading(true);
+    if (hotel) {
+      //update hotel
+      axios
+        .post(`/api/hotel/${hotel.id}`, values)
+        .then((res) => {
+          toast({
+            variant: "success",
+            description: "Hotel updated successfully",
+          });
+          router.push(`/hotel/${hotel.id}`);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+          setIsLoading(false);
+        });
+    } else {
+      //create hotel
+      axios
+        .post("/api/hotel", values)
+        .then((res) => {
+          toast({
+            variant: "success",
+            description: "🎉 Hotel created ",
+          });
+          router.push(`/hotel/${res.data.id}`);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          toast({
+            variant: "destructive",
+            description: `ERROR! ${error.message}`,
+          });
+          setIsLoading(false);
+        });
+    }
   }
 
   const handleImageDelete = (image: string) => {
@@ -449,7 +502,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     <FormControl>
                       {image ? (
                         <>
-                          <div className="relative max-w-[400px] min-w-[200px] max-h-[400px] min-h-[200px] mt-4 border-2 border-dotted border-gray-400">
+                          <div className="relative max-w-[400px] min-w-[200px] max-h-[400px] min-h-[200px] mt-4 border-2 border-dotted border-gray-400 rounded-sm">
                             <Image
                               src={image}
                               alt="hotel banner"
@@ -473,7 +526,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                         </>
                       ) : (
                         <>
-                          <div className="flex flex-col items-center max-w-[4000px] border-2 border-dotted border-primary/50 rounded justify-center pt-6 pb-3">
+                          <div className="flex flex-col items-center max-w-[4000px] border-2 border-dotted border-primary/50 justify-center pt-6 pb-3  rounded-sm">
                             <UploadButton
                               endpoint="imageUploader"
                               onClientUploadComplete={(res) => {
@@ -625,6 +678,39 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </FormItem>
                 )}
               />
+              <div className="flex justify-between gap-2 flex-wrap">
+                {hotel ? (
+                  <Button disabled={isLoading} className="w-[150px]">
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                        Updating
+                      </>
+                    ) : (
+                      <>
+                        <PencilLine className="mr-2 h-4 w-4" />
+                        Update Details
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <>
+                    <Button disabled={isLoading} className="w-[150px]">
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 animate-spin h-4 w-4" />
+                          Creating
+                        </>
+                      ) : (
+                        <>
+                          <CirclePlus className="mr-2 h-4 w-4" />
+                          Create Hotel
+                        </>
+                      )}
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </form>

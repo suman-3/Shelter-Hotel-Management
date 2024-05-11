@@ -1,9 +1,15 @@
+
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+
 
 export default function Home() {
   return (
     <div>
-      <Button>Click Me</Button>
+      
+<Button>
+  hi
+</Button>
     </div>
   );
 }

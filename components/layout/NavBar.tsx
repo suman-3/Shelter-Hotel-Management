@@ -26,7 +26,7 @@ const NavBar = () => {
   }, []);
 
   return (
-    <div className="sticky top-0 border border-b-primary/10 bg-secondary">
+    <div className="sticky top-0 border border-b-primary/10 bg-secondary z-50">
       <Container className="flex justify-between">
         <Link href="/" className="flex gap-1 items-center cursor-pointer">
           <Image src="/Logo/logo.svg" alt="logo" width={40} height={40} />
