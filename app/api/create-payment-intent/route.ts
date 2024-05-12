@@ -45,6 +45,7 @@ export async function POST(req: Request) {
           payment_intent_id,
           {
             amount: booking.totalPrice * 100,
+            description: `Updating Booking for ${booking.roomName}`,
           }
         );
 
@@ -65,6 +66,7 @@ export async function POST(req: Request) {
         amount: booking.totalPrice * 100,
         currency: bookingData.currency,
         automatic_payment_methods: { enabled: true },
+        description: `Booking for ${booking.roomName}`,
       });
 
       bookingData.paymentIntentId = paymentIntent.id;

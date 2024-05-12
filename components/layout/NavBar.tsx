@@ -1,6 +1,12 @@
 "use client";
 
-import { SignIn, SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+import {
+  SignIn,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useAuth,
+} from "@clerk/nextjs";
 import React from "react";
 import Container from "../Container";
 import { Skeleton } from "../ui/skeleton";
@@ -43,7 +49,7 @@ const NavBar = () => {
           ) : (
             <div className="flex gap-5 items-center">
               <ModeToggle />
-              <NavMenu/>
+              <NavMenu />
               <div className="h-12 w-12 flex items-center justify-center bg-gray-300/50 rounded-full">
                 <UserButton afterSignOutUrl="/" />
               </div>
@@ -52,22 +58,11 @@ const NavBar = () => {
         ) : (
           <div className="flex gap-5 items-center">
             <ModeToggle />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                router.push("/sign-in");
-              }}
-            >
-              Sign In
+            <Button variant="outline" size="sm">
+              <SignInButton mode="modal" />
             </Button>
-            <Button
-              size="sm"
-              onClick={() => {
-                router.push("/sign-up");
-              }}
-            >
-              Sign Up
+            <Button size="sm">
+              <SignUpButton mode="modal" />
             </Button>
           </div>
         )}

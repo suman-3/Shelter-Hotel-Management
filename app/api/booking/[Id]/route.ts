@@ -4,58 +4,57 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { roomId: string } }
+  { params }: { params: { Id: string } }
 ) {
   try {
-    const body = await req.json();
     const { userId } = auth();
 
-    if (!params.roomId) {
-      return new NextResponse("Room Id is required", { status: 401 });
+    if (!params.Id) {
+      return new NextResponse("Payment Intent Id is required", { status: 401 });
     }
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const room = await prismadb.room.update({
+    const booking = await prismadb.booking.update({
       where: {
-        id: params.roomId,
+        paymentIntentId: params.Id,
       },
       data: {
-        ...body,
+        payementStatus: true,
       },
     });
 
-    return NextResponse.json(room);
+    return NextResponse.json(booking);
   } catch (error) {
-    console.log("Error at /api/hotel/roomId PATCH:", error);
+    console.log("Error at /api/booking/Id PATCH:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { roomId: string } }
+  { params }: { params: { Id: string } }
 ) {
   try {
     const { userId } = auth();
 
-    if (!params.roomId) {
-      return new NextResponse("Room Id is required", { status: 401 });
+    if (!params.Id) {
+      return new NextResponse("Booking Id is required", { status: 401 });
     }
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const hotel = await prismadb.room.delete({
+    const booking = await prismadb.booking.delete({
       where: {
-        id: params.roomId,
+        id: params.Id,
       },
     });
 
-    return NextResponse.json(hotel);
+    return NextResponse.json(booking);
   } catch (error) {
-    console.log("Error at /api/hotel/roomId DELETE:", error);
+    console.log("Error at /api/booking/Id DELETE:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

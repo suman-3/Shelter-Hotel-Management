@@ -85,6 +85,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
 
   const pathname = usePathname();
   const isHotelDetailsPage = pathname.includes("hotel-details");
+  const isBookRoom = pathname.includes("book-room");
 
   useEffect(() => {
     if (date && date.from && date.to) {
@@ -202,6 +203,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
             breakFastIncluded: includeBreakFast,
             totalPrice: totalPrice,
           },
+          description: 'Booking payment for hotel room', 
           payment_intent_id: paymentIntentId,
         }),
       })
@@ -350,140 +352,146 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
         </div>
         <Separator />
       </CardContent>
-      <CardFooter>
-        {isHotelDetailsPage ? (
-          <div className="flex flex-col gap-6">
-            <div>
-              <h2 className="text-semibold mb-1">Select days</h2>
-              <DatePickerWithRange
-                date={date}
-                setDate={setDate}
-                disabledDates={disabledDates}
-              />
-            </div>
-            {room.breakFastPrice > 0 && (
+      {!isBookRoom && (
+        <CardFooter>
+          {isHotelDetailsPage ? (
+            <div className="flex flex-col gap-6">
               <div>
-                <div className="mb-1 text-[14px]">
-                  Do You Want to served breakfast everyday?
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="breakFast"
-                    onCheckedChange={(value) => {
-                      setIncludeBreakFast(!!value);
-                    }}
-                  />
-                  <label
-                    htmlFor="breakFast"
-                    className="text-gray-600/70 text-sm"
-                  >
-                    Include Breakfast
-                  </label>
-                </div>
+                <h2 className="text-semibold mb-1">Select days</h2>
+                <DatePickerWithRange
+                  date={date}
+                  setDate={setDate}
+                  disabledDates={disabledDates}
+                />
               </div>
-            )}
-            <div className="flex items-center gap-1">
-              Total Price: <span className="font-bold">₹{totalPrice}</span>{" "}
-              {days > 0 ? `for ${days} Days` : "per day"}
-            </div>
-            <Button
-              disabled={
-                bookingIsLoading || !date || !date.from || !date.to || days < 1
-              }
-              type="button"
-              onClick={() => handleBookRoom()}
-            >
-              {bookingIsLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Wand2 className="mr-2 h-4 w-4" />
+              {room.breakFastPrice > 0 && (
+                <div>
+                  <div className="mb-1 text-[14px]">
+                    Do You Want to served breakfast everyday?
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="breakFast"
+                      onCheckedChange={(value) => {
+                        setIncludeBreakFast(!!value);
+                      }}
+                    />
+                    <label
+                      htmlFor="breakFast"
+                      className="text-gray-600/70 text-sm"
+                    >
+                      Include Breakfast
+                    </label>
+                  </div>
+                </div>
               )}
-              {!date || !date.from || !date.to || days < 1
-                ? "Select Dates to Book"
-                : bookingIsLoading
-                ? "Booking"
-                : "Book Room"}
-            </Button>
-          </div>
-        ) : (
-          <>
-            <div className="flex flex-col gap-2 w-full justify-center items-center">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    type="button"
-                    disabled={isLoading}
-                    className="w-[200px]"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-1 animate-spin h-4 w-4" />
-                        Deleting
-                      </>
-                    ) : (
-                      <>
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete Room
-                      </>
-                    )}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-[400px] w-[90%] rounded-lg">
-                  <DialogHeader>
-                    <DialogTitle>Delete Room</DialogTitle>
-                    <DialogDescription>
-                      Are you sure , you want to delete the room?
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <DialogFooter className="justify-center gap-8 lg:gap-5 flex-row sm:justify-center">
-                    <DialogClose asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-[100px]"
-                      >
-                        Close
-                      </Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <Button
-                        type="button"
-                        className="w-[100px]"
-                        onClick={() => handleRoomDelete(room)}
-                      >
-                        Delete
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-              <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-                <DialogTrigger>
-                  <Button type="button" className="w-[200px]">
-                    <PenLine className="w-4 h-4 mr-2" />
-                    Update Room
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-[900px] w-[90%]">
-                  <DialogHeader className="px-2">
-                    <DialogTitle>Update Room</DialogTitle>
-                    <DialogDescription>
-                      Make changes to the room details
-                    </DialogDescription>
-                  </DialogHeader>
-                  <AddRoomForm
-                    hotel={hotel}
-                    room={room}
-                    handleDialogueOpen={handleDialogueOpen}
-                  />
-                </DialogContent>
-              </Dialog>
+              <div className="flex items-center gap-1">
+                Total Price: <span className="font-bold">₹{totalPrice}</span>{" "}
+                {days > 0 ? `for ${days} Days` : "per day"}
+              </div>
+              <Button
+                disabled={
+                  bookingIsLoading ||
+                  !date ||
+                  !date.from ||
+                  !date.to ||
+                  days < 1
+                }
+                type="button"
+                onClick={() => handleBookRoom()}
+              >
+                {bookingIsLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Wand2 className="mr-2 h-4 w-4" />
+                )}
+                {!date || !date.from || !date.to || days < 1
+                  ? "Select Dates to Book"
+                  : bookingIsLoading
+                  ? "Booking"
+                  : "Book Room"}
+              </Button>
             </div>
-          </>
-        )}
-      </CardFooter>
+          ) : (
+            <>
+              <div className="flex flex-col gap-2 w-full justify-center items-center">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      type="button"
+                      disabled={isLoading}
+                      className="w-[200px]"
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-1 animate-spin h-4 w-4" />
+                          Deleting
+                        </>
+                      ) : (
+                        <>
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete Room
+                        </>
+                      )}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[400px] w-[90%] rounded-lg">
+                    <DialogHeader>
+                      <DialogTitle>Delete Room</DialogTitle>
+                      <DialogDescription>
+                        Are you sure , you want to delete the room?
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter className="justify-center gap-8 lg:gap-5 flex-row sm:justify-center">
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="w-[100px]"
+                        >
+                          Close
+                        </Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          type="button"
+                          className="w-[100px]"
+                          onClick={() => handleRoomDelete(room)}
+                        >
+                          Delete
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                  <DialogTrigger>
+                    <Button type="button" className="w-[200px]">
+                      <PenLine className="w-4 h-4 mr-2" />
+                      Update Room
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-[900px] w-[90%]">
+                    <DialogHeader className="px-2">
+                      <DialogTitle>Update Room</DialogTitle>
+                      <DialogDescription>
+                        Make changes to the room details
+                      </DialogDescription>
+                    </DialogHeader>
+                    <AddRoomForm
+                      hotel={hotel}
+                      room={room}
+                      handleDialogueOpen={handleDialogueOpen}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </>
+          )}
+        </CardFooter>
+      )}
     </Card>
   );
 };
