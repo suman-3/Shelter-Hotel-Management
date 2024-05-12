@@ -152,7 +152,6 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
           </div>
         </CardDescription>
         <CardDescription className="pb-2 flex items-center gap-1">
-          <Sparkle className="h-4 w-4 -ml-[2px]" />
           <p>{Hotel.locationDescription}</p>
         </CardDescription>
         <Separator />
