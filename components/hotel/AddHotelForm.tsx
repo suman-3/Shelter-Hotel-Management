@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PartyPopper, Terminal } from "lucide-react";
+import { Hotel, PartyPopper, Terminal } from "lucide-react";
 import { GiShoppingBag } from "react-icons/gi";
 
 import React, { useEffect, useState } from "react";
@@ -784,29 +784,31 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     )}
                   </div>
                 </Alert>
-              ):<Alert className="bg-purple-500 text-white">
-              <PartyPopper className="h-4 w-4 stroke-white" />
-              <AlertTitle>Create Another Rooms ⭐</AlertTitle>
-              <div className="flex flex-row gap-8">
-                <AlertDescription>
-                 
-                  <div>
-                    Add rooms to showcase the variety of rooms available in your hotel
+              ) : (
+                <Alert className="bg-purple-500 text-white">
+                  <Hotel className="h-4 w-4 stroke-white" />
+                  <AlertTitle>Create Rooms</AlertTitle>
+                  <div className="flex flex-row gap-8">
+                    <AlertDescription>
+                      <div>
+                        Add rooms to showcase the variety of rooms available in
+                        your hotel
+                      </div>
+                    </AlertDescription>
+                    {hotel && (
+                      <Button
+                        type="button"
+                        className="w-[120px]"
+                        onClick={() =>
+                          router.push(`/hotel-details/${hotel.id}`)
+                        }
+                      >
+                        <Eye className="mr-2 h-4 w-4" /> Preview
+                      </Button>
+                    )}
                   </div>
-                </AlertDescription>
-                {hotel && (
-                  <Button
-                    type="button"
-                    className="w-[120px]"
-                    onClick={() =>
-                      router.push(`/hotel-details/${hotel.id}`)
-                    }
-                  >
-                    <Eye className="mr-2 h-4 w-4" /> Preview
-                  </Button>
-                )}
-              </div>
-            </Alert>}
+                </Alert>
+              )}
               <div className="flex justify-between gap-2 flex-wrap">
                 {hotel ? (
                   <Button disabled={isLoading} className="w-[150px]">
