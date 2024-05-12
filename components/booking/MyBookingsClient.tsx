@@ -1,8 +1,8 @@
 "use client";
 
 import { RoomCardProps } from "@/interface/RoomCardProps";
-import React, { useEffect, useMemo, useState } from "react";
-import { IoIosCheckmarkCircleOutline } from "react-icons/io";
+import React, { useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -11,16 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import Image from "next/image";
 import {
   AirVent,
@@ -30,20 +21,17 @@ import {
   Bath,
   BedDouble,
   BedSingle,
-  CirclePlus,
-  Crown,
   EarOff,
+  Eye,
   HandPlatter,
   HeartHandshake,
   Home,
   Loader2,
+  MapPin,
   Monitor,
   Mountain,
-  PenLine,
-  Save,
-  Shield,
   Ship,
-  Trash,
+  Sparkle,
   Trees,
   UserRoundCheck,
   UsersRound,
@@ -52,28 +40,20 @@ import {
   Wifi,
 } from "lucide-react";
 import { Separator } from "../ui/separator";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-
-import { Room } from "@prisma/client";
-import axios from "axios";
 
 import { useToast } from "../ui/use-toast";
 
-import { DateRange } from "react-day-picker";
-import {
-  addDays,
-  differenceInCalendarDays,
-  eachDayOfInterval,
-  set,
-} from "date-fns";
-import { Checkbox } from "../ui/checkbox";
+import { differenceInCalendarDays } from "date-fns";
+
 import { useAuth } from "@clerk/nextjs";
 import useBookRooms from "@/hooks/useBookRoom";
 import { MyBookingsClientProps } from "@/interface/MyBookingsClientProps";
 import useLocation from "@/hooks/useLocation";
 import moment from "moment";
 import AmenityItem from "../room/AmenityItem";
+import Link from "next/link";
 
 const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
   const { userId } = useAuth();
@@ -81,7 +61,6 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
   const { setRoomData, paymentIntentId, setClientSecret, setPaymentIntentId } =
     useBookRooms();
   const [bookingIsLoading, setBookingIsLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const { getCountryByCode, getStateByCode } = useLocation();
   const router = useRouter();
   const startDate = moment(booking.startDate).format("DD MMM YYYY");
@@ -163,6 +142,20 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
   return (
     <Card>
       <CardHeader>
+        <CardTitle>{Hotel.title}</CardTitle>
+        <CardDescription>
+          <div className="font-semibold mt-1">
+            <AmenityItem>
+              <MapPin className="h-4 w-4 -ml-[2px]" />
+              {country?.name}, {state?.name}, {Hotel?.city}
+            </AmenityItem>
+          </div>
+        </CardDescription>
+        <CardDescription className="pb-2 flex items-center gap-1">
+          <Sparkle className="h-4 w-4 -ml-[2px]" />
+          <p>{Hotel.locationDescription}</p>
+        </CardDescription>
+        <Separator />
         <CardTitle>{Room.title}</CardTitle>
         <CardDescription>{Room.description}</CardDescription>
       </CardHeader>
@@ -301,19 +294,44 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
               </h2>
             )}
             {booking.payementStatus ? (
-              <h2 className="flex gap-1 -ml-[2px]">
+              <h2 className="flex gap-1 -ml-[2px] text-teal-600">
                 <BadgeIndianRupee className="h-4 w-4" />
                 Paid ₹{booking.totalPrice} - Room Reserved
               </h2>
             ) : (
               <h2 className="flex gap-1 -ml-[2px] text-rose-500">
                 <BadgeIndianRupee className="h-4 w-4" />
-                Not Paid ₹{booking.totalPrice} - Room Not Reserved 
+                Not Paid ₹{booking.totalPrice} - Room Not Reserved
               </h2>
             )}
           </div>
         </div>
       </CardContent>
+      <Separator />
+      <CardFooter className="mt-4 flex flex-col gap-2">
+        <Link href={`/hotel-details/${Hotel.id}`}>
+          <Button
+            disabled={bookingIsLoading}
+            variant="outline"
+            className="w-[200px]"
+          >
+            <Eye className="h-4 w-4 mr-1" />
+            View Hotel
+          </Button>
+        </Link>
+        {!booking.payementStatus && booking.userId === userId && (
+          <Button
+            disabled={bookingIsLoading}
+            onClick={() => {
+              handleBookRoom();
+            }}
+            className="w-[200px]"
+          >
+            <BadgeIndianRupee className="h-4 w-4 mr-2" />
+            <span className="mr-2">Pay Now</span>
+          </Button>
+        )}
+      </CardFooter>
     </Card>
   );
 };
