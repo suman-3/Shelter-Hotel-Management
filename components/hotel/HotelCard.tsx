@@ -20,10 +20,14 @@ const HotelCard = ({ hotel }: { hotel: HotelWithRooms }) => {
   const country = getCountryByCode(hotel.country);
 
   return (
-
     <div
       onClick={() => {
-        router.push(`/hotel-details/${hotel.id}`);
+        {
+          isMyHotels
+            ? router.push(`/hotel/${hotel.id}
+            `)
+            : router.push(`/hotel-details/${hotel.id}`);
+        }
       }}
       className={cn(
         "cursor-pointer col-span-1 transition hover:-translate-y-[2px] hover:z-20 duration-300 hover:shadow-lg rounded-lg",
