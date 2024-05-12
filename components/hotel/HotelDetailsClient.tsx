@@ -22,6 +22,7 @@ import { FaSpa, FaSwimmer } from "react-icons/fa";
 import { GiShoppingBag } from "react-icons/gi";
 import { MdLocalLaundryService } from "react-icons/md";
 import RoomCard from "../room/RoomCard";
+import { Skeleton } from "../ui/skeleton";
 
 const HotelDetailsClient = ({
   hotel,
@@ -36,12 +37,17 @@ const HotelDetailsClient = ({
   return (
     <div className="flex flex-col gap-6 pb-7 mt-5">
       <div className="aspect-squareoverflow-hidden relative w-full h-[230px] md:h-[300px] rounded-lg">
-        <Image
+        {hotel.image ? (
+          <Image
           alt={hotel.title}
           src={hotel.image}
           fill
           className="object-cover rounded-lg"
         />
+        ):(
+          <Skeleton className="w-full h-[230px] md:h-[300px] rounded-lg bg-slate-300/80" />
+
+        )}
       </div>
       <div className="">
         <div className="flex w-full justify-between items-center">
@@ -149,7 +155,7 @@ const HotelDetailsClient = ({
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {hotel.rooms.map((room) => {
-                return <RoomCard room={room} key={room.id} bookings={bookings} />;
+                return <RoomCard  hotel={hotel} room={room} key={room.id} bookings={bookings} />;
               })}
             </div>
           </div>

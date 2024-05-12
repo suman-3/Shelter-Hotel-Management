@@ -186,8 +186,8 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
           setBookingIsLoading(false);
           if (res.status === 401) {
             router.push("/sign-in");
-            return res.json();
           }
+          return res.json();
         })
         .then((data) => {
           setClientSecret(data.paymentIntent.client_secret);
@@ -372,7 +372,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
                 <Wand2 className="mr-2 h-4 w-4" />
               )}
               {!date || !date.from || !date.to || days < 1
-                ? "Select Dates"
+                ? "Select Dates to Book"
                 : bookingIsLoading
                 ? "Booking"
                 : "Book Room"}

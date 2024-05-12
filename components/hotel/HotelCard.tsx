@@ -20,6 +20,7 @@ const HotelCard = ({ hotel }: { hotel: HotelWithRooms }) => {
   const country = getCountryByCode(hotel.country);
 
   return (
+
     <div
       onClick={() => {
         router.push(`/hotel-details/${hotel.id}`);
