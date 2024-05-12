@@ -37,7 +37,28 @@ export async function POST(req: Request) {
 
     if (foundBooking && payment_intent_id) {
       // Update existing booking
-      // Add your update logic here
+      const current_intent = await stripe.paymentIntents.retrieve(
+        payment_intent_id
+      );
+      if (current_intent) {
+        const updated_intent = await stripe.paymentIntents.update(
+          payment_intent_id,
+          {
+            amount: booking.totalPrice * 100,
+          }
+        );
+
+        const res = await prismadb.booking.update({
+          where: { paymentIntentId: payment_intent_id, userId: user.id },
+          data: bookingData,
+        });
+
+        if (!res) {
+          return NextResponse.error();
+        }
+
+        return NextResponse.json({ paymentIntent: updated_intent });
+      }
     } else {
       // Create new booking
       const paymentIntent = await stripe.paymentIntents.create({
