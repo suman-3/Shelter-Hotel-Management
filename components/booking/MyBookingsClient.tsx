@@ -25,6 +25,7 @@ import {
   Eye,
   HandPlatter,
   HeartHandshake,
+  History,
   Home,
   Loader2,
   MapPin,
@@ -272,11 +273,16 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
         <div className="flex flex-col gap-2">
           <CardTitle className="text-md underline">Booking Details</CardTitle>
           <div className="text-primary/90 text-sm flex flex-col gap-1 justify-start">
-            <h2 className="flex gap-1">
+            <h2 className="flex gap-1 -ml-[1.5px]">
               <UserRoundCheck className="h-4 w-4" />
               Booked by&nbsp;
               <span className="font-semibold">{booking.userName}</span> for
-              {dayCount} days at - {moment(booking.bookedAt).fromNow()}
+              &nbsp;
+              {dayCount} days
+            </h2>
+            <h2 className="flex gap-1 -ml-[2px] items-center">
+              <History className="h-4 w-4" />
+              Booked at - {moment(booking.bookedAt).fromNow()}
             </h2>
             <h2 className="flex gap-1 -ml-[2px]">
               <BadgeCheck className="h-4 w-4" />
@@ -331,7 +337,9 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
             ) : (
               <BadgeIndianRupee className="h-4 w-4 mr-2" />
             )}
-           <span className="mr-1"> {bookingIsLoading ? "Processing..." : "Pay Now"}</span>
+            <span className="mr-1">
+              {bookingIsLoading ? "Processing..." : "Pay Now"}
+            </span>
           </Button>
         )}
       </CardFooter>
