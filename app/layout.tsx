@@ -7,6 +7,7 @@ import NavBar from "@/components/layout/NavBar";
 import { ThemeProvider } from "@/components/theme-provider";
 import Container from "@/components/Container";
 import { Toaster } from "@/components/ui/toaster";
+import LocationFilter from "@/components/LocationFilter";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,16 +26,16 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body className={inter.className}>
-          <Toaster />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster />
             <main className="flex flex-col min-h-screen bg-secondary">
               <NavBar />
-
+              <LocationFilter />
               <section className="flex-grow px-4 lg:px-10">{children}</section>
             </main>
           </ThemeProvider>
