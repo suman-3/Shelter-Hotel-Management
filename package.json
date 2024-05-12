@@ -26,6 +26,7 @@
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.4.0",
     "@uploadthing/react": "^6.5.3",
+    "@vercel/analytics": "^1.2.2",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

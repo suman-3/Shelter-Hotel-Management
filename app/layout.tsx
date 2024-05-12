@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Container from "@/components/Container";
 import { Toaster } from "@/components/ui/toaster";
 import LocationFilter from "@/components/LocationFilter";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
               <NavBar />
               <LocationFilter />
               <section className="flex-grow px-4 lg:px-10">{children}</section>
+              <Analytics />
             </main>
           </ThemeProvider>
         </body>
