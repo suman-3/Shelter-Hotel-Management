@@ -327,8 +327,12 @@ const MyBookingsClient: React.FC<MyBookingsClientProps> = ({ booking }) => {
             }}
             className="w-[200px]"
           >
-            <BadgeIndianRupee className="h-4 w-4 mr-2" />
-            <span className="mr-2">Pay Now</span>
+            {bookingIsLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : (
+              <BadgeIndianRupee className="h-4 w-4 mr-2" />
+            )}
+           <span className="mr-1"> {bookingIsLoading ? "Processing..." : "Pay Now"}</span>
           </Button>
         )}
       </CardFooter>

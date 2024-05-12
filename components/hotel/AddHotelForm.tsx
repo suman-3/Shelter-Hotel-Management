@@ -760,7 +760,7 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </FormItem>
                 )}
               />
-              {hotel && !hotel.rooms.length && (
+              {hotel && !hotel.rooms.length ? (
                 <Alert className="bg-purple-500 text-white">
                   <PartyPopper className="h-4 w-4 stroke-white" />
                   <AlertTitle>One last step!</AlertTitle>
@@ -784,7 +784,29 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                     )}
                   </div>
                 </Alert>
-              )}
+              ):<Alert className="bg-purple-500 text-white">
+              <PartyPopper className="h-4 w-4 stroke-white" />
+              <AlertTitle>Create Another Rooms ⭐</AlertTitle>
+              <div className="flex flex-row gap-8">
+                <AlertDescription>
+                 
+                  <div>
+                    Add rooms to showcase the variety of rooms available in your hotel
+                  </div>
+                </AlertDescription>
+                {hotel && (
+                  <Button
+                    type="button"
+                    className="w-[120px]"
+                    onClick={() =>
+                      router.push(`/hotel-details/${hotel.id}`)
+                    }
+                  >
+                    <Eye className="mr-2 h-4 w-4" /> Preview
+                  </Button>
+                )}
+              </div>
+            </Alert>}
               <div className="flex justify-between gap-2 flex-wrap">
                 {hotel ? (
                   <Button disabled={isLoading} className="w-[150px]">
