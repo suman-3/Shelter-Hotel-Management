@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StripeElementsOptions, loadStripe } from "@stripe/stripe-js";
 import useBookRooms from "@/hooks/useBookRoom";
 import RoomCard from "../room/RoomCard";
@@ -22,6 +22,10 @@ const BookRoomClient = () => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    setPageLoaded(true);
+  }, []);
+
   const options: StripeElementsOptions = {
     clientSecret,
     appearance: {
@@ -34,7 +38,7 @@ const BookRoomClient = () => {
     setPaymentSuccess(value);
   };
 
-  if (!paymentSuccess && (!bookingRoomData || !clientSecret))
+  if (pageLoaded && !paymentSuccess && (!bookingRoomData || !clientSecret))
     return (
       <div className="flex flex-col items-center">
         <h2 className="text-rose-500 text-center text-lg">
