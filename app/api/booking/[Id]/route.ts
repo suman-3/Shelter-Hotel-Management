@@ -78,6 +78,7 @@ export async function GET(
 
     const bookings = await prismadb.booking.findMany({
       where: {
+        payementStatus: true,
         roomId: params.Id,
         endDate: {
           gt: yesterday,
