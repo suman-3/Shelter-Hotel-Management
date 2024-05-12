@@ -29,7 +29,7 @@ const page = async () => {
             Here are Bookings visitors made on your property
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {bookingsIHaveMade.map((booking) => (
+            {bookingsFromVisitors.map((booking) => (
               <MyBookingsClient key={booking.id} booking={booking} />
             ))}
           </div>
