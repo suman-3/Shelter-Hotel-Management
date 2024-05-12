@@ -16,6 +16,41 @@ import { Button } from "../ui/button";
 import { Loader, Loader2, Nfc, PartyPopper } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Booking } from "@prisma/client";
+import { DateRangesType } from "@/interface/DateRangesTypeProps";
+import { endOfDay, isWithinInterval, set, startOfDay } from "date-fns";
+
+function hasOverlap(
+  startDate: Date,
+  endDate: Date,
+  dateRanges: DateRangesType[]
+) {
+  const targetInterval = {
+    start: startOfDay(new Date(startDate)),
+    end: endOfDay(new Date(endDate)),
+  };
+
+  for (const range of dateRanges) {
+    const rangeStart = startOfDay(new Date(range.startDate));
+    const rangeEnd = endOfDay(new Date(range.endDate));
+
+    if (
+      isWithinInterval(targetInterval.start, {
+        start: rangeStart,
+        end: rangeEnd,
+      }) ||
+      isWithinInterval(targetInterval.end, {
+        start: rangeStart,
+        end: rangeEnd,
+      }) ||
+      (targetInterval.start < rangeStart && targetInterval.end > rangeEnd)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 const RoomPaymentForm = ({
   clientSecret,
@@ -50,6 +85,32 @@ const RoomPaymentForm = ({
 
     try {
       //date overlaps
+
+      const response = await axios.get(
+        `/api/booking/${bookingRoomData.room.id}`
+      );
+      const bookings = response.data;
+
+      const roomBookingsDate = bookings.map((booking: Booking) => {
+        return {
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+        };
+      });
+
+      const overlapFound = hasOverlap(
+        bookingRoomData.startDate,
+        bookingRoomData.endDate,
+        roomBookingsDate
+      );
+
+      if (overlapFound) {
+        setIsLoading(false);
+        return toast({
+          variant: "destructive",
+          description: "Room is already booked for the selected dates",
+        });
+      }
 
       stripe
         .confirmPayment({ elements, redirect: "if_required" })

@@ -203,7 +203,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: RoomCardProps) => {
             breakFastIncluded: includeBreakFast,
             totalPrice: totalPrice,
           },
-          description: 'Booking payment for hotel room', 
+          description: "Booking payment for hotel room",
           payment_intent_id: paymentIntentId,
         }),
       })
